@@ -14,13 +14,13 @@ def read():
 
 def calc(s):
     elements = s.split()
-
+    
     while '+' in elements:
         idx = elements.index('+')
         result = int(elements[idx - 1]) + int(elements[idx + 1])
         del elements[idx-1:idx+2]
         elements.insert(idx - 1, str(result))
-
+    
     ret = 1
     for element in elements:
         if element != '*':
@@ -45,6 +45,6 @@ def work(sList):
     
     print total
 
-    
+
 if __name__ == "__main__":
     work(read())
