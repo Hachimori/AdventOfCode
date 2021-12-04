@@ -43,7 +43,7 @@ def getScore(board, numList):
         if isOK:
             return score
 
-    return score if isOK else -1
+    return -1
 
 
     
