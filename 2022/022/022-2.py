@@ -1,16 +1,23 @@
 #!/usr/bin/env python
+#
+# It took 29 min to run.
+#
 
 import copy
+import sys
 
-SZ = 4 # 50
+sys.setrecursionlimit(30000)
+
+SZ = 50 # 4
 BOTTOM = 0
 RIGHT = 1
 TOP = 2
 LEFT = 3
 FRONT = 4
 BACK = 5
-dr = [-1, 0, 1, 0]
-dc = [0, 1, 0, -1]
+dr = [0, 1, 0, -1]
+dc = [1, 0, -1, 0]
+
 
 
 def read():
@@ -63,9 +70,15 @@ def rotateFaceLeft(face, facePt):
 def rotateCubeRight(cube, cubePt):
     swapFace(BOTTOM, RIGHT, cube, cubePt)
     swapFace(RIGHT, TOP, cube, cubePt)
-    swapFace(TOP, LEFT, cube, cubePt)
+    swapFace(TOP, LEFT, cube, cubePt)    
     rotateFaceLeft(cube[FRONT], cubePt[FRONT])
-    rotateFaceLeft(cube[BACK], cubePt[BACK])
+    rotateFaceRight(cube[BACK], cubePt[BACK])
+
+    rotateFaceLeft(cube[RIGHT], cubePt[RIGHT])
+    rotateFaceLeft(cube[RIGHT], cubePt[RIGHT])
+    rotateFaceLeft(cube[TOP], cubePt[TOP])
+    rotateFaceLeft(cube[TOP], cubePt[TOP])
+
 
 def rotateCubeLeft(cube, cubePt):
     rotateCubeRight(cube, cubePt)
@@ -92,11 +105,12 @@ def getByCubePt(cubeR, cubeC, cube, cubePt):
     r, c = cubePt[BOTTOM][cubeR][cubeC]
     return cube[BOTTOM][r][c]
 
+
 def dfs(mazeR, mazeC, cubeR, cubeC, cube, cubePt, visited, maze):
     visited[mazeR][mazeC] = True
 
     setByCubePt(cubeR, cubeC, cube, cubePt, (mazeR, mazeC))
-
+    '''
     for i in range(6):
         print ["BOTTOM", "RIGHT", "TOP", "LEFT", "FRONT", "BACK"][i]
         for r in range(SZ):
@@ -118,6 +132,7 @@ def dfs(mazeR, mazeC, cubeR, cubeC, cube, cubePt, visited, maze):
     print " ------ "
     print " ------ "
     print ""
+    '''
     
     for i in range(4):
         mazeNR = mazeR + dr[i]
@@ -155,8 +170,8 @@ def dfs(mazeR, mazeC, cubeR, cubeC, cube, cubePt, visited, maze):
 
 
 def createCube(maze):
-    cube = [[[(1000, 1000) for k in range(SZ)] for j in range(SZ)] for i in range(6)]
-    cubePt = [[[(1000, 1000) for k in range(SZ)] for j in range(SZ)] for i in range(6)]
+    cube = [[[(-1, -1) for k in range(SZ)] for j in range(SZ)] for i in range(6)]
+    cubePt = [[[(-1, -1) for k in range(SZ)] for j in range(SZ)] for i in range(6)]
     visited = [[False for c in range(len(maze[0]))] for r in range(len(maze))]
 
 
@@ -191,9 +206,6 @@ def createMove(moveStr):
 
 
 def getNextRC(cubeR, cubeC, to, cube, cubePt):
-    dr = [0, 1, 0, -1]
-    dc = [1, 0, -1, 0]
-
     cubeNR = cubeR + dr[to]
     cubeNC = cubeC + dc[to]
     
@@ -219,6 +231,7 @@ def work((lines, moveStr)):
     moves = createMove(moveStr)
     row, col = len(maze), len(maze[0])
 
+    '''
     for i in range(6):
         print ["BOTTOM", "RIGHT", "TOP", "LEFT", "FRONT", "BACK"][i]
         for r in range(SZ):
@@ -240,7 +253,7 @@ def work((lines, moveStr)):
     print " ------ "
     print " ------ "
     print ""
-    
+    '''
     
     cubeR = 0
     cubeC = 0
@@ -255,16 +268,14 @@ def work((lines, moveStr)):
             for _ in range(move):
                 backupCube = copy.deepcopy(cube)
                 backupCubePt = copy.deepcopy(cubePt)
-                
+
                 cubeNR, cubeNC = getNextRC(cubeR, cubeC, to, cube, cubePt)
                 mazeNR, mazeNC = getByCubePt(cubeNR, cubeNC, cube, cubePt)
                 if maze[mazeNR][mazeNC] == '#':
-                    print "hit on " + str(mazeNR) + " " + str(mazeNC)
                     cube = backupCube
                     cubePt = backupCubePt
                     break
                 cubeR, cubeC = cubeNR, cubeNC
-                print mazeNR, mazeNC
     
     if 0 <= cubeR + dr[to] < SZ and 0 <= cubeC + dc[to] < SZ:
         r1, c1 = getByCubePt(cubeR, cubeC, cube, cubePt)
